@@ -3,575 +3,411 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI-Based Tomato Quality Classification System</title>
+  <title>Tomato AI — Premium Demo</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root {
-      --bg: #07111f;
-      --bg2: #0d1b2a;
-      --panel: rgba(255,255,255,0.07);
-      --panel-2: rgba(255,255,255,0.05);
-      --text: #eef4ff;
-      --muted: #b7c4d6;
-      --accent: #ff5a5f;
-      --accent2: #28c76f;
-      --accent3: #4dabf7;
-      --warning: #ffb020;
-      --border: rgba(255,255,255,0.12);
-      --radius: 22px;
-      --radius-lg: 28px;
-      --maxw: 1220px;
-      --shadow: 0 16px 50px rgba(0,0,0,.25);
+    :root{
+      --bg:#050816;
+      --bg2:#0b1226;
+      --panel:rgba(255,255,255,.07);
+      --panel-2:rgba(255,255,255,.05);
+      --text:#f5f8ff;
+      --muted:#b9c4d8;
+      --line:rgba(255,255,255,.12);
+      --red:#ff5a5f;
+      --green:#31d17c;
+      --blue:#6ea8ff;
+      --yellow:#ffb020;
+      --pink:#f56bd7;
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --radius:24px;
+      --max:1240px;
     }
 
-    * { box-sizing: border-box; }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: var(--text);
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      color:var(--text);
       background:
-        radial-gradient(circle at top right, rgba(255,90,95,.18), transparent 28%),
-        radial-gradient(circle at top left, rgba(40,199,111,.12), transparent 25%),
-        linear-gradient(180deg, #07111f, #081628 55%, #06111d 100%);
+        radial-gradient(circle at 15% 10%, rgba(110,168,255,.12), transparent 25%),
+        radial-gradient(circle at 85% 10%, rgba(255,90,95,.14), transparent 25%),
+        radial-gradient(circle at 50% 100%, rgba(49,209,124,.08), transparent 28%),
+        linear-gradient(180deg, #050816 0%, #081023 45%, #050816 100%);
+    }
+
+    a{text-decoration:none;color:inherit}
+
+    .nav{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(14px);
+      background:rgba(5,8,22,.6);
+      border-bottom:1px solid var(--line);
+    }
+    .nav-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:16px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:800; letter-spacing:.2px;
+    }
+    .brand-dot{
+      width:12px;height:12px;border-radius:50%;
+      background:linear-gradient(135deg,var(--red),#ff7e57);
+      box-shadow:0 0 18px rgba(255,90,95,.8);
+    }
+    .nav-links a{
+      color:var(--muted);
+      font-size:14px;
+      margin-left:18px;
+    }
+    .nav-links a:hover{color:var(--text)}
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:28px 22px 80px;
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(16px);
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:22px;
+      align-items:stretch;
+      margin-top:8px;
+    }
+
+    .hero-left{
+      padding:36px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-left:before{
+      content:"";
+      position:absolute;
+      right:-80px; top:-80px;
+      width:260px; height:260px; border-radius:50%;
+      background:radial-gradient(circle, rgba(255,90,95,.16), transparent 70%);
+      pointer-events:none;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 14px;
+      border-radius:999px;
+      color:var(--muted);
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      font-size:13px;
+      margin-bottom:18px;
+    }
+
+    h1{
+      font-size:56px;
+      line-height:1.02;
+      letter-spacing:-.05em;
+      margin:0 0 14px;
+    }
+    h2{
+      font-size:32px;
+      margin:0 0 12px;
+      letter-spacing:-.03em;
+    }
+    h3{
+      font-size:19px;
+      margin:0 0 8px;
+    }
+
+    .subtitle,.lead,.muted,.small-card p{
+      color:var(--muted);
+      line-height:1.72;
+    }
+    .subtitle{
+      font-size:18px;
+      max-width:760px;
+      margin-bottom:24px;
+    }
+
+    .cta{
+      display:flex; flex-wrap:wrap; gap:12px;
+      margin-bottom:24px;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:13px 18px;
+      border-radius:16px;
+      font-weight:700;
+      transition:.2s ease;
+      border:1px solid transparent;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{
+      background:linear-gradient(135deg,var(--red),#ff7e57);
+      color:white;
+    }
+    .btn-secondary{
+      background:rgba(255,255,255,.05);
+      color:white;
+      border-color:var(--line);
+    }
+
+    .hero-stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+    .mini-stat{
+      padding:16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+    }
+    .mini-stat .num{
+      font-size:26px; font-weight:800; margin-bottom:6px;
+    }
+
+    .hero-right{
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:18px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-visual{
+      min-height:320px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+    }
+
+    .floating{
+      position:absolute;
+      padding:10px 14px;
+      border-radius:16px;
+      font-size:13px;
+      color:var(--text);
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--line);
+      backdrop-filter:blur(12px);
+    }
+    .f1{top:8px; right:0}
+    .f2{left:0; bottom:70px}
+    .f3{right:10px; bottom:10px}
+
+    .metrics{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+    .metric{
+      padding:18px;
+      border-radius:20px;
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+    }
+    .metric .label{
+      color:var(--muted);
+      font-size:13px;
+    }
+    .metric .value{
+      font-size:30px;
+      font-weight:800;
+      margin-top:8px;
+    }
+
+    section{padding-top:34px}
+
+    .section-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:end;
+      gap:18px;
+      margin-bottom:14px;
+    }
+
+    .problem-grid,.two-col,.example-grid,.quality-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
     }
 
-    a { color: inherit; }
-
-    .nav {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      backdrop-filter: blur(12px);
-      background: rgba(7,17,31,.78);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .nav-inner {
-      max-width: var(--maxw);
-      margin: 0 auto;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .brand {
-      font-weight: 800;
-      font-size: 18px;
-      letter-spacing: .2px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), #ff8760);
-      box-shadow: 0 0 16px rgba(255,90,95,.7);
-    }
-
-    .nav-links a {
-      text-decoration: none;
-      color: var(--muted);
-      margin-left: 18px;
-      font-size: 14px;
-    }
-
-    .nav-links a:hover {
-      color: var(--text);
-    }
-
-    .container {
-      max-width: var(--maxw);
-      margin: 0 auto;
-      padding: 28px 20px 80px;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 22px;
-      align-items: stretch;
-      margin-top: 12px;
-    }
-
-    .hero-left {
-      padding: 34px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-left::before {
-      content: "";
-      position: absolute;
-      right: -80px;
-      top: -80px;
-      width: 240px;
-      height: 240px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,90,95,.18), transparent 70%);
-      pointer-events: none;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,.07);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 8px 14px;
-      border-radius: 999px;
-      font-size: 13px;
-      margin-bottom: 18px;
-    }
-
-    h1 {
-      margin: 0 0 14px;
-      font-size: 50px;
-      line-height: 1.04;
-      letter-spacing: -.04em;
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 30px;
-    }
-
-    h3 {
-      margin: 0 0 8px;
-      font-size: 18px;
-    }
-
-    .subtitle,
-    .lead,
-    .small-card p,
-    .muted {
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .subtitle {
-      max-width: 760px;
-      font-size: 17px;
-      margin-bottom: 24px;
-    }
-
-    .cta-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      color: #fff;
-      font-weight: 700;
-      padding: 13px 18px;
-      border-radius: 14px;
-      transition: .2s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn.primary {
-      background: linear-gradient(135deg, var(--accent), #ff7b54);
-    }
-
-    .btn.secondary {
-      background: rgba(40,199,111,.18);
-      border: 1px solid var(--border);
-    }
-
-    .hero-bottom-info {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 14px;
-    }
-
-    .mini-info {
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--border);
-      padding: 16px;
-      border-radius: 18px;
-    }
-
-    .mini-info .big {
-      font-size: 24px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .hero-right {
-      position: relative;
-      padding: 26px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .hero-visual {
-      position: relative;
-      min-height: 430px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .floating-tag {
-      position: absolute;
-      background: rgba(255,255,255,.08);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px 14px;
-      font-size: 13px;
-      color: var(--text);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-    }
-
-    .tag-1 { top: 24px; right: 26px; }
-    .tag-2 { left: 18px; bottom: 96px; }
-    .tag-3 { right: 22px; bottom: 24px; }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(2,1fr);
-      gap: 16px;
-      margin-top: 12px;
-    }
-
-    .metric {
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 18px;
-    }
-
-    .metric .label {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .metric .value {
-      font-size: 30px;
-      font-weight: 800;
-      margin-top: 8px;
-    }
-
-    section {
-      padding-top: 34px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3,1fr);
-      gap: 18px;
-    }
-
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 18px;
-    }
-
-    .small-card {
-      padding: 22px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .small-card::after {
-      content: "";
-      position: absolute;
-      width: 120px;
-      height: 120px;
-      right: -45px;
-      bottom: -45px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,.08), transparent 70%);
-      pointer-events: none;
-    }
-
-    .icon-badge {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-      font-size: 20px;
-      background: rgba(255,255,255,.08);
-      border: 1px solid var(--border);
-    }
-
-    .problem-grid {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 20px;
-    }
-
-    .problem-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .problem-item {
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px 18px;
-    }
-
-    .process {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 18px;
-    }
-
-    .process-step {
-      padding: 20px;
-      position: relative;
-    }
-
-    .step-num {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--accent), #ff7b54);
-      margin-bottom: 12px;
-    }
-
-    .class-card {
-      padding: 22px;
-      min-height: 170px;
-    }
-
-    .class-green { background: rgba(40,199,111,.12); }
-    .class-yellow { background: rgba(255,176,32,.12); }
-    .class-red { background: rgba(255,90,95,.12); }
-
-    .quality-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .indicator-list {
-      display: grid;
-      gap: 16px;
-      margin-top: 8px;
-    }
-
-    .indicator-row {
-      display: grid;
-      gap: 8px;
-    }
-
-    .indicator-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      font-size: 14px;
-    }
-
-    .bar {
-      height: 10px;
-      width: 100%;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
-      overflow: hidden;
-    }
-
-    .bar > span {
-      display: block;
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), #ff7b54);
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .chart-card {
-      padding: 20px;
-    }
-
-    .chart-card canvas {
-      width: 100% !important;
-      height: 320px !important;
-    }
-
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-
-    .example {
-      display: grid;
-      grid-template-columns: .95fr 1.05fr;
-      gap: 20px;
-    }
-
-    .prediction-box {
-      padding: 24px;
-    }
-
-    .pred {
-      font-size: 36px;
-      font-weight: 800;
-      color: #ff7a7f;
-      margin: 12px 0;
-    }
-
-    .qr-wrap {
-      display: flex;
-      gap: 18px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .qr-wrap img {
-      width: 180px;
-      height: 180px;
-      background: #fff;
-      padding: 10px;
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-    }
-
-    .link-box {
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      margin-top: 14px;
-      color: var(--muted);
-      word-break: break-all;
-      font-size: 14px;
-    }
-
-    .footer-note {
-      text-align: center;
-      color: var(--muted);
-      padding: 32px 0 10px;
-      font-size: 14px;
-    }
-
-    .tomato-svg {
-      width: 100%;
-      max-width: 420px;
-      height: auto;
-      display: block;
-      filter: drop-shadow(0 20px 35px rgba(0,0,0,.35));
-    }
-
-    @media (max-width: 1050px) {
-      .hero,
-      .problem-grid,
-      .two-col,
-      .quality-grid,
-      .example {
-        grid-template-columns: 1fr;
-      }
-
-      .charts-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .process {
-        grid-template-columns: repeat(2,1fr);
-      }
-    }
-
-    @media (max-width: 820px) {
-      .grid-4 {
-        grid-template-columns: repeat(2,1fr);
-      }
-
-      .grid-3 {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-bottom-info {
-        grid-template-columns: 1fr;
-      }
-
-      h1 {
-        font-size: 38px;
-      }
-
-      .nav-inner {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .nav-links a {
-        margin-left: 0;
-        margin-right: 14px;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .metrics,
-      .process,
-      .grid-4 {
-        grid-template-columns: 1fr;
-      }
-
-      h1 {
-        font-size: 32px;
-      }
-
-      h2 {
-        font-size: 25px;
-      }
-
-      .hero-left,
-      .hero-right {
-        padding: 22px;
-      }
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+    .grid-4{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+    }
+
+    .small-card{
+      padding:22px;
+      position:relative;
+      overflow:hidden;
+    }
+    .small-card:after{
+      content:"";
+      position:absolute;
+      width:120px;height:120px;
+      right:-44px; bottom:-44px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,.08), transparent 70%);
+      pointer-events:none;
+    }
+
+    .icon{
+      width:48px;height:48px;border-radius:14px;
+      display:inline-flex;align-items:center;justify-content:center;
+      margin-bottom:12px;
+      background:rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      font-size:20px;
+    }
+
+    .class-market{background:rgba(49,209,124,.12)}
+    .class-fast{background:rgba(255,176,32,.12)}
+    .class-bad{background:rgba(255,90,95,.12)}
+
+    .workflow{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:18px;
+    }
+    .step{
+      padding:22px;
+    }
+    .step-no{
+      width:38px;height:38px;border-radius:50%;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-weight:800;
+      background:linear-gradient(135deg,var(--red),#ff7e57);
+      margin-bottom:12px;
+    }
+
+    .indicator-list{display:grid;gap:16px;margin-top:8px}
+    .indicator{display:grid;gap:7px}
+    .indicator-top{
+      display:flex;justify-content:space-between;gap:12px;
+      font-size:14px;color:var(--muted);
+    }
+    .bar{
+      width:100%;height:10px;border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+    }
+    .bar span{
+      display:block;height:100%;border-radius:999px;
+      background:linear-gradient(90deg,var(--red),#ff7e57);
+    }
+
+    .chart-card{padding:20px}
+    .charts{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+    }
+    canvas{
+      width:100%!important;
+      height:320px!important;
+    }
+
+    .prediction{
+      padding:24px;
+    }
+    .pred-value{
+      font-size:36px;
+      font-weight:800;
+      color:#ff7a7f;
+      margin:12px 0;
+    }
+
+    .qr-box{
+      padding:24px;
+    }
+    .qr-wrap{
+      display:flex; gap:18px; align-items:center; flex-wrap:wrap;
+    }
+    .qr-wrap img{
+      width:190px; height:190px;
+      background:white;
+      padding:10px;
+      border-radius:20px;
+      box-shadow:var(--shadow);
+    }
+
+    .link-box{
+      background:rgba(255,255,255,.05);
+      border:1px solid var(--line);
+      color:var(--muted);
+      padding:14px;
+      border-radius:16px;
+      margin-top:14px;
+      word-break:break-all;
+      font-size:14px;
+    }
+
+    .footer{
+      text-align:center;
+      color:var(--muted);
+      padding:32px 0 8px;
+      font-size:14px;
+    }
+
+    .tomato-svg{
+      width:100%;
+      max-width:430px;
+      height:auto;
+      filter:drop-shadow(0 28px 40px rgba(0,0,0,.35));
+    }
+
+    @media (max-width:1080px){
+      .hero,.problem-grid,.two-col,.quality-grid,.example-grid{grid-template-columns:1fr}
+      .charts{grid-template-columns:1fr}
+      .workflow{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:820px){
+      .grid-4{grid-template-columns:repeat(2,1fr)}
+      .grid-3{grid-template-columns:1fr}
+      .hero-stats{grid-template-columns:1fr}
+      h1{font-size:40px}
+      .nav-inner{flex-direction:column;align-items:flex-start}
+      .nav-links a{margin-left:0;margin-right:14px}
+    }
+    @media (max-width:560px){
+      .metrics,.workflow,.grid-4{grid-template-columns:1fr}
+      h1{font-size:33px}
+      h2{font-size:26px}
+      .hero-left,.hero-right{padding:22px}
     }
   </style>
 </head>
 <body>
   <nav class="nav">
     <div class="nav-inner">
-      <div class="brand">
-        <span class="brand-dot"></span>
-        <span>Tomato AI</span>
-      </div>
+      <div class="brand"><span class="brand-dot"></span><span>Tomato AI</span></div>
       <div class="nav-links">
         <a href="#problem">Problem</a>
         <a href="#objectives">Objectives</a>
@@ -584,7 +420,7 @@
     </div>
   </nav>
 
-  <div class="container">
+  <div class="wrap">
     <section class="hero">
       <div class="card hero-left">
         <div class="eyebrow">🍅 AI in agriculture · postharvest quality · decision support</div>
@@ -594,22 +430,22 @@
           under postharvest transport and storage conditions using machine learning.
         </div>
 
-        <div class="cta-row">
-          <a class="btn primary" href="https://tomato-quality-app-grhvr2evmkz9ezzvp2mkcm.streamlit.app/" target="_blank">Open Live App</a>
-          <a class="btn secondary" href="#prototype">Go to QR Section</a>
+        <div class="cta">
+          <a class="btn btn-primary" href="https://tomato-quality-app-grhvr2evmkz9ezzvp2mkcm.streamlit.app/" target="_blank">Open Live App</a>
+          <a class="btn btn-secondary" href="#prototype">View QR Section</a>
         </div>
 
-        <div class="hero-bottom-info">
-          <div class="mini-info">
-            <div class="big">3</div>
+        <div class="hero-stats">
+          <div class="mini-stat">
+            <div class="num">3</div>
             <div class="muted">Market classes predicted by the model</div>
           </div>
-          <div class="mini-info">
-            <div class="big">0.97</div>
+          <div class="mini-stat">
+            <div class="num">0.97</div>
             <div class="muted">Regression model R² performance</div>
           </div>
-          <div class="mini-info">
-            <div class="big">0.78</div>
+          <div class="mini-stat">
+            <div class="num">0.78</div>
             <div class="muted">Classification accuracy in the prototype</div>
           </div>
         </div>
@@ -617,9 +453,9 @@
 
       <div class="card hero-right">
         <div class="hero-visual">
-          <div class="floating-tag tag-1">📦 Distance · Temperature · Day · Vibration</div>
-          <div class="floating-tag tag-2">🤖 AI model → instant classification</div>
-          <div class="floating-tag tag-3">✅ Marketable · ⚠ Fast Sale · ❌ Unmarketable</div>
+          <div class="floating f1">📦 Distance · Temperature · Day · Vibration</div>
+          <div class="floating f2">🤖 AI model → instant classification</div>
+          <div class="floating f3">✅ Marketable · ⚠ Fast Sale · ❌ Unmarketable</div>
 
           <svg class="tomato-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -633,16 +469,14 @@
                 <stop offset="100%" stop-color="#1f9a5a"/>
               </linearGradient>
               <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#4dabf7"/>
+                <stop offset="0%" stop-color="#6ea8ff"/>
                 <stop offset="100%" stop-color="#7bdff2"/>
               </linearGradient>
             </defs>
 
-            <!-- background circles -->
             <circle cx="250" cy="250" r="185" fill="rgba(255,255,255,0.04)" />
             <circle cx="250" cy="250" r="140" fill="rgba(255,255,255,0.03)" />
 
-            <!-- AI circuit lines -->
             <g stroke="url(#lineGrad)" stroke-width="4" fill="none" opacity="0.85">
               <path d="M95 140 L150 180 L185 145" />
               <path d="M370 145 L335 180 L395 220" />
@@ -664,7 +498,6 @@
               <circle cx="300" cy="350" r="8"/>
             </g>
 
-            <!-- tomato leaf -->
             <g transform="translate(250 118)">
               <path d="M0 -35 C-20 -18 -34 -6 -52 -2 C-30 6 -18 18 -12 36 C0 18 8 5 0 -35Z" fill="url(#leafGrad)" />
               <path d="M0 -35 C20 -18 34 -6 52 -2 C30 6 18 18 12 36 C0 18 -8 5 0 -35Z" fill="url(#leafGrad)" />
@@ -672,7 +505,6 @@
               <rect x="-6" y="-42" width="12" height="28" rx="6" fill="#3fb56b"/>
             </g>
 
-            <!-- tomato body -->
             <path d="M250 145
                      C170 145, 118 195, 118 275
                      C118 357, 180 410, 250 410
@@ -680,19 +512,16 @@
                      C382 194, 331 145, 250 145Z"
                   fill="url(#tomatoGrad)"/>
 
-            <!-- shine -->
             <ellipse cx="205" cy="220" rx="46" ry="72" fill="rgba(255,255,255,0.16)" transform="rotate(-20 205 220)"/>
 
-            <!-- simple face style data nodes -->
             <g fill="#fff" opacity="0.95">
               <circle cx="210" cy="278" r="10"/>
               <circle cx="292" cy="278" r="10"/>
             </g>
             <path d="M214 334 C232 350 268 350 286 334" stroke="#fff" stroke-width="8" stroke-linecap="round" fill="none"/>
 
-            <!-- AI badge -->
             <g transform="translate(360 110)">
-              <circle cx="0" cy="0" r="34" fill="rgba(77,171,247,0.18)" stroke="rgba(77,171,247,0.6)" />
+              <circle cx="0" cy="0" r="34" fill="rgba(110,168,255,0.18)" stroke="rgba(110,168,255,0.6)" />
               <text x="0" y="8" text-anchor="middle" fill="#7bdff2" font-size="22" font-family="Arial" font-weight="700">AI</text>
             </g>
           </svg>
@@ -720,37 +549,26 @@
     </section>
 
     <section id="problem">
+      <div class="section-head">
+        <div>
+          <h2>Problem Statement</h2>
+          <div class="muted">Why tomato quality prediction matters</div>
+        </div>
+      </div>
       <div class="problem-grid">
         <div class="card small-card">
-          <h2>Problem Statement</h2>
           <p class="lead">
             Tomato is a highly perishable agricultural product. During transport and storage,
-            quality can decline rapidly due to environmental and mechanical factors. This causes
-            economic losses and reduces product marketability.
+            quality can decline rapidly due to environmental and mechanical factors, causing
+            economic loss and reducing marketability.
           </p>
-          <div class="problem-list">
-            <div class="problem-item"><strong>Postharvest loss risk:</strong> product quality drops quickly after transport and during storage.</div>
-            <div class="problem-item"><strong>Operational challenge:</strong> sellers need fast, accurate decisions about whether tomatoes should be sold, monitored, or rejected.</div>
-            <div class="problem-item"><strong>Research need:</strong> AI can transform postharvest data into a practical decision-support system.</div>
-          </div>
         </div>
-
         <div class="card small-card">
-          <h2>Why This Study Matters</h2>
-          <div class="grid-3" style="grid-template-columns:1fr; gap:14px;">
-            <div class="problem-item">
-              <strong>For logistics</strong><br>
-              Helps evaluate transport-related quality risk.
-            </div>
-            <div class="problem-item">
-              <strong>For storage</strong><br>
-              Supports storage management and shelf-life decisions.
-            </div>
-            <div class="problem-item">
-              <strong>For marketability</strong><br>
-              Predicts whether the product is marketable, needs fast sale, or is unmarketable.
-            </div>
-          </div>
+          <ul class="muted">
+            <li>Postharvest loss risk increases after transport and during storage.</li>
+            <li>Sellers need fast and accurate quality decisions.</li>
+            <li>AI can transform postharvest data into a practical decision-support system.</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -759,18 +577,18 @@
       <h2>Project Objectives</h2>
       <div class="grid-3">
         <div class="card small-card">
-          <div class="icon-badge">🤖</div>
+          <div class="icon">🤖</div>
           <h3>Develop an AI-based system</h3>
           <p>Build a machine learning model that predicts tomato market status automatically from transport and storage data.</p>
         </div>
         <div class="card small-card">
-          <div class="icon-badge">🍅</div>
+          <div class="icon">🍅</div>
           <h3>Evaluate tomato quality</h3>
           <p>Assess the effect of transport distance, temperature, storage duration, and vibration on postharvest quality.</p>
         </div>
         <div class="card small-card">
-          <div class="icon-badge">📊</div>
-          <h3>Support real decisions</h3>
+          <div class="icon">📊</div>
+          <h3>Support decisions</h3>
           <p>Provide a practical tool for logistics, warehouse management, and sales planning.</p>
         </div>
       </div>
@@ -778,24 +596,24 @@
 
     <section id="workflow">
       <h2>System Workflow</h2>
-      <div class="process">
-        <div class="card process-step">
-          <div class="step-num">1</div>
+      <div class="workflow">
+        <div class="card step">
+          <div class="step-no">1</div>
           <h3>Data Collection</h3>
-          <p class="muted">Transport and storage variables were organized into a structured prototype dataset.</p>
+          <p class="muted">Transport and storage variables were organized into a prototype dataset.</p>
         </div>
-        <div class="card process-step">
-          <div class="step-num">2</div>
+        <div class="card step">
+          <div class="step-no">2</div>
           <h3>Model Development</h3>
           <p class="muted">Random Forest models were used for regression and classification tasks.</p>
         </div>
-        <div class="card process-step">
-          <div class="step-num">3</div>
+        <div class="card step">
+          <div class="step-no">3</div>
           <h3>Prediction Logic</h3>
           <p class="muted">The system estimates quality loss and classifies tomatoes into marketability groups.</p>
         </div>
-        <div class="card process-step">
-          <div class="step-num">4</div>
+        <div class="card step">
+          <div class="step-no">4</div>
           <h3>Live Prototype</h3>
           <p class="muted">A Streamlit-based mobile-friendly web app was created for instant user access.</p>
         </div>
@@ -805,47 +623,19 @@
     <section id="inputs">
       <h2>Input Parameters</h2>
       <div class="grid-4">
-        <div class="card small-card">
-          <div class="icon-badge">📦</div>
-          <h3>Transport Distance</h3>
-          <p>Distance travelled in kilometers.</p>
-        </div>
-        <div class="card small-card">
-          <div class="icon-badge">🌡️</div>
-          <h3>Storage Temperature</h3>
-          <p>Storage condition in degrees Celsius.</p>
-        </div>
-        <div class="card small-card">
-          <div class="icon-badge">📅</div>
-          <h3>Storage Day</h3>
-          <p>Number of days after transport.</p>
-        </div>
-        <div class="card small-card">
-          <div class="icon-badge">📳</div>
-          <h3>Vibration Level</h3>
-          <p>Relative vibration intensity during transport.</p>
-        </div>
+        <div class="card small-card"><div class="icon">📦</div><h3>Transport Distance</h3><p>Distance travelled in kilometers.</p></div>
+        <div class="card small-card"><div class="icon">🌡️</div><h3>Storage Temperature</h3><p>Storage condition in degrees Celsius.</p></div>
+        <div class="card small-card"><div class="icon">📅</div><h3>Storage Day</h3><p>Number of days after transport.</p></div>
+        <div class="card small-card"><div class="icon">📳</div><h3>Vibration Level</h3><p>Relative vibration intensity during transport.</p></div>
       </div>
     </section>
 
     <section id="outputs">
       <h2>Output Classes</h2>
       <div class="grid-3">
-        <div class="card class-card class-green">
-          <div class="icon-badge">✅</div>
-          <h3>Marketable</h3>
-          <p class="muted">Tomatoes are suitable for regular market sale and still retain acceptable quality.</p>
-        </div>
-        <div class="card class-card class-yellow">
-          <div class="icon-badge">⚠️</div>
-          <h3>Fast Sale Required</h3>
-          <p class="muted">Tomatoes are still saleable, but quality is declining and they should be sold quickly.</p>
-        </div>
-        <div class="card class-card class-red">
-          <div class="icon-badge">❌</div>
-          <h3>Unmarketable</h3>
-          <p class="muted">Tomatoes are predicted to have poor quality and are no longer suitable for market sale.</p>
-        </div>
+        <div class="card small-card class-market"><div class="icon">✅</div><h3>Marketable</h3><p>Suitable for normal sale conditions and still retains acceptable quality.</p></div>
+        <div class="card small-card class-fast"><div class="icon">⚠️</div><h3>Fast Sale Required</h3><p>Still saleable, but quality is declining and should be sold quickly.</p></div>
+        <div class="card small-card class-bad"><div class="icon">❌</div><h3>Unmarketable</h3><p>Predicted to have poor quality and no longer suitable for market sale.</p></div>
       </div>
     </section>
 
@@ -853,10 +643,6 @@
       <div class="quality-grid">
         <div class="card small-card">
           <h2>Scientific Basis</h2>
-          <p class="lead">
-            Tomato quality is influenced by several postharvest factors. Longer distance, higher temperature,
-            longer storage duration, and vibration all contribute to deterioration.
-          </p>
           <ul class="muted">
             <li>Longer transport distance increases damage risk.</li>
             <li>Higher storage temperature accelerates deterioration.</li>
@@ -864,23 +650,22 @@
             <li>Transport vibration contributes to postharvest loss.</li>
           </ul>
         </div>
-
         <div class="card small-card">
           <h2>Quality Indicators</h2>
           <div class="indicator-list">
-            <div class="indicator-row">
+            <div class="indicator">
               <div class="indicator-top"><span>Weight Loss</span><span>High relevance</span></div>
               <div class="bar"><span style="width:88%"></span></div>
             </div>
-            <div class="indicator-row">
+            <div class="indicator">
               <div class="indicator-top"><span>Firmness Loss</span><span>High relevance</span></div>
               <div class="bar"><span style="width:84%"></span></div>
             </div>
-            <div class="indicator-row">
+            <div class="indicator">
               <div class="indicator-top"><span>Lightness Loss</span><span>Moderate relevance</span></div>
               <div class="bar"><span style="width:72%"></span></div>
             </div>
-            <div class="indicator-row">
+            <div class="indicator">
               <div class="indicator-top"><span>Yellowness Loss</span><span>Moderate relevance</span></div>
               <div class="bar"><span style="width:76%"></span></div>
             </div>
@@ -897,10 +682,9 @@
             <li>The regression model predicted quality losses close to the real values.</li>
             <li>The classification model assigned tomatoes into practical marketability classes.</li>
             <li>Storage day had the strongest impact in the current prototype dataset.</li>
-            <li>Severe conditions such as 205 km, 22°C, 12 days, and vibration 1.3 produced an <strong>Unmarketable</strong> result.</li>
+            <li>205 km, 22°C, 12 days, and vibration 1.3 produced an <strong>Unmarketable</strong> result.</li>
           </ul>
         </div>
-
         <div class="card chart-card">
           <canvas id="featureChart"></canvas>
         </div>
@@ -909,24 +693,16 @@
 
     <section id="charts">
       <h2>Quality Change Charts</h2>
-      <div class="charts-grid">
-        <div class="card chart-card">
-          <canvas id="weightChart"></canvas>
-        </div>
-        <div class="card chart-card">
-          <canvas id="firmnessChart"></canvas>
-        </div>
-        <div class="card chart-card">
-          <canvas id="lightnessChart"></canvas>
-        </div>
-        <div class="card chart-card">
-          <canvas id="yellownessChart"></canvas>
-        </div>
+      <div class="charts">
+        <div class="card chart-card"><canvas id="weightChart"></canvas></div>
+        <div class="card chart-card"><canvas id="firmnessChart"></canvas></div>
+        <div class="card chart-card"><canvas id="lightnessChart"></canvas></div>
+        <div class="card chart-card"><canvas id="yellownessChart"></canvas></div>
       </div>
     </section>
 
-    <section id="prototype" class="example">
-      <div class="card prediction-box">
+    <section id="prototype" class="example-grid">
+      <div class="card prediction">
         <h2>Example Prediction</h2>
         <p class="lead">The prototype allows users to enter transport and storage conditions and receive an instant marketability classification.</p>
         <ul class="muted">
@@ -935,54 +711,44 @@
           <li><strong>Storage day:</strong> 12</li>
           <li><strong>Vibration level:</strong> 1.3</li>
         </ul>
-        <div class="pred">Unmarketable</div>
-        <p class="muted">This result indicates that the tomato quality is predicted to be unsuitable for market sale under severe conditions.</p>
+        <div class="pred-value">Unmarketable</div>
+        <p class="muted">This result indicates that tomato quality is predicted to be unsuitable for market sale under severe conditions.</p>
       </div>
 
-      <div class="card prediction-box">
+      <div class="card qr-box">
         <h2>Live Prototype Access</h2>
         <div class="qr-wrap">
           <img src="tomato_app_qr.png" alt="QR code">
           <div>
             <p class="lead">Scan the QR code or use the button below to open the live Streamlit application.</p>
-            <a class="btn primary" href="https://tomato-quality-app-grhvr2evmkz9ezzvp2mkcm.streamlit.app/" target="_blank">Open Streamlit App</a>
-
-            <div class="link-box">
-              https://tomato-quality-app-grhvr2evmkz9ezzvp2mkcm.streamlit.app/
-            </div>
-
-            <div class="link-box">
-              Project website:<br>
-              https://j4f4rlee.github.io/tomato-quality-app/
-            </div>
+            <a class="btn btn-primary" href="https://tomato-quality-app-grhvr2evmkz9ezzvp2mkcm.streamlit.app/" target="_blank">Open Streamlit App</a>
+            <div class="link-box">https://tomato-quality-app-grhvr2evmkz9ezzvp2mkcm.streamlit.app/</div>
+            <div class="link-box">Project website:<br>https://j4f4rlee.github.io/tomato-quality-app/</div>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="footer-note">
-      AI-Based Tomato Quality Classification System · Designed for academic presentation and live demo
+    <div class="footer">
+      AI-Based Tomato Quality Classification System · Premium academic demo page
     </div>
   </div>
 
   <script>
     const labels = ["100 km", "154 km", "205 km"];
-
     const commonOptions = {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          labels: { color: "#eef4ff" }
-        }
+        legend: { labels: { color: "#f5f8ff" } }
       },
       scales: {
         x: {
-          ticks: { color: "#b7c4d6" },
+          ticks: { color: "#b9c4d8" },
           grid: { color: "rgba(255,255,255,0.06)" }
         },
         y: {
-          ticks: { color: "#b7c4d6" },
+          ticks: { color: "#b9c4d8" },
           grid: { color: "rgba(255,255,255,0.06)" }
         }
       }
@@ -995,7 +761,7 @@
         datasets: [{
           label: "Feature importance",
           data: [0.833, 0.136, 0.016, 0.015],
-          backgroundColor: ["#ff5a5f", "#ffb020", "#4dabf7", "#28c76f"],
+          backgroundColor: ["#ff5a5f", "#ffb020", "#6ea8ff", "#31d17c"],
           borderRadius: 10
         }]
       },
@@ -1003,11 +769,7 @@
         ...commonOptions,
         plugins: {
           ...commonOptions.plugins,
-          title: {
-            display: true,
-            text: "Feature Importance Analysis",
-            color: "#eef4ff"
-          }
+          title: { display: true, text: "Feature Importance Analysis", color: "#f5f8ff" }
         }
       }
     });
@@ -1017,7 +779,7 @@
       data: {
         labels,
         datasets: [
-          { label: "10°C", data: [3.09, 3.30, 3.50], backgroundColor: "#28c76f", borderRadius: 10 },
+          { label: "10°C", data: [3.09, 3.30, 3.50], backgroundColor: "#31d17c", borderRadius: 10 },
           { label: "22°C", data: [5.96, 6.31, 6.91], backgroundColor: "#ff5a5f", borderRadius: 10 }
         ]
       },
@@ -1025,11 +787,7 @@
         ...commonOptions,
         plugins: {
           ...commonOptions.plugins,
-          title: {
-            display: true,
-            text: "Weight Loss after 12 Days",
-            color: "#eef4ff"
-          }
+          title: { display: true, text: "Weight Loss after 12 Days", color: "#f5f8ff" }
         }
       }
     });
@@ -1039,7 +797,7 @@
       data: {
         labels,
         datasets: [
-          { label: "10°C", data: [28.36, 33.69, 37.12], backgroundColor: "#4dabf7", borderRadius: 10 },
+          { label: "10°C", data: [28.36, 33.69, 37.12], backgroundColor: "#6ea8ff", borderRadius: 10 },
           { label: "22°C", data: [50.82, 51.44, 58.39], backgroundColor: "#ffb020", borderRadius: 10 }
         ]
       },
@@ -1047,11 +805,7 @@
         ...commonOptions,
         plugins: {
           ...commonOptions.plugins,
-          title: {
-            display: true,
-            text: "Firmness Loss after 12 Days",
-            color: "#eef4ff"
-          }
+          title: { display: true, text: "Firmness Loss after 12 Days", color: "#f5f8ff" }
         }
       }
     });
@@ -1062,18 +816,14 @@
         labels,
         datasets: [
           { label: "10°C", data: [23.44, 34.80, 35.95], backgroundColor: "#9b5de5", borderRadius: 10 },
-          { label: "22°C", data: [45.88, 59.08, 59.13], backgroundColor: "#f15bb5", borderRadius: 10 }
+          { label: "22°C", data: [45.88, 59.08, 59.13], backgroundColor: "#f56bd7", borderRadius: 10 }
         ]
       },
       options: {
         ...commonOptions,
         plugins: {
           ...commonOptions.plugins,
-          title: {
-            display: true,
-            text: "Lightness Loss after 12 Days",
-            color: "#eef4ff"
-          }
+          title: { display: true, text: "Lightness Loss after 12 Days", color: "#f5f8ff" }
         }
       }
     });
@@ -1086,18 +836,16 @@
           {
             label: "10°C",
             data: [30.92, 41.98, 41.96],
-            borderColor: "#28c76f",
-            backgroundColor: "#28c76f",
-            tension: 0.35,
-            fill: false
+            borderColor: "#31d17c",
+            backgroundColor: "#31d17c",
+            tension: 0.35
           },
           {
             label: "22°C",
             data: [49.36, 58.01, 58.18],
             borderColor: "#ff5a5f",
             backgroundColor: "#ff5a5f",
-            tension: 0.35,
-            fill: false
+            tension: 0.35
           }
         ]
       },
@@ -1105,11 +853,7 @@
         ...commonOptions,
         plugins: {
           ...commonOptions.plugins,
-          title: {
-            display: true,
-            text: "Yellowness Loss after 12 Days",
-            color: "#eef4ff"
-          }
+          title: { display: true, text: "Yellowness Loss after 12 Days", color: "#f5f8ff" }
         }
       }
     });
